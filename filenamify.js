@@ -15,12 +15,13 @@ export default function filenamify(string, options = {}) {
 	}
 
 	const replacement = options.replacement === undefined ? '!' : options.replacement;
+	const preserveRepeatedReplacements = options.preserveRepeatedReplacements === undefined ? false : options.preserveRepeatedReplacements;
 
 	if (filenameReservedRegex().test(replacement) && reControlChars.test(replacement)) {
 		throw new Error('Replacement string cannot contain reserved filename characters');
 	}
 
-	if (replacement.length > 0) {
+	if (replacement.length > 0 && !preserveRepeatedReplacements) {
 		string = string.replace(reRepeatedReservedCharacters, '$1');
 	}
 

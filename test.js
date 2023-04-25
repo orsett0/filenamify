@@ -29,10 +29,10 @@ test('filenamify()', t => {
 	t.is(filenamify('c/n', {replacement: 'con'}), 'cconn');
 	t.is(filenamify('.dotfile'), '.dotfile');
 	t.is(filenamify('my <file name-', {replacement: '-'}), 'my -file name-');
-	t.is(filenamify('--<abc->>>--', {replacement: '-'}), '---abc----');
+	t.is(filenamify('<--abc->>>--', {replacement: '-'}), '---abc----');
 	t.is(filenamify('-<<abc>-', {replacement: '-'}), '--abc--');
-	t.is(filenamify('my <file name<', {replacement: '-'}), 'my -file name-');
 	t.is(filenamify('my <file name<'), 'my !file name!');
+	t.is(filenamify('/path/to/file---name.ext', {replacement: '-'}), '-path-to-file---name.ext');
 });
 
 test('filenamifyPath()', t => {
@@ -55,4 +55,11 @@ test('filenamify length', t => {
 	t.is(filenamify(filenameNoExt), 'very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_very_');
 	t.is(filenamify(filenameNoExt, {maxLength: 20}), 'very_very_very_very_');
 	t.is(filenamify('.asdfghjkl', {maxLength: 2}), '.asdfghjkl');
+});
+
+test('filenamify preserveRepeatedReplacements', t => {
+	t.is(filenamify('/path/to/file///--name.ext', {replacement: '-', preserveRepeatedReplacements: true}), '-path-to-file-----name.ext');
+	t.is(filenamify('/path/to/file///--name.ext', {replacement: '-', preserveRepeatedReplacements: false}), '-path-to-file---name.ext');
+	t.is(filenamify('/path/to/file<<>>name.ext', {replacement: '-', preserveRepeatedReplacements: true}), '-path-to-file----name.ext');
+	t.is(filenamify('/path/to/file<<>>name.ext', {replacement: '-', preserveRepeatedReplacements: false}), '-path-to-file-name.ext');
 });
